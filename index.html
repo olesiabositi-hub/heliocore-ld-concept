@@ -16,6 +16,24 @@ header{display:flex;justify-content:space-between;align-items:center;gap:20px;ma
 .ai{margin-top:18px;background:var(--accent);color:#0a0a0a;border-radius:22px;padding:25px;display:grid;grid-template-columns:160px 1fr;gap:20px;align-items:center}.ai-tag{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.ai-text{font-size:20px;line-height:1.35;letter-spacing:-.02em}
 .bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-top:48px;padding-top:26px;border-top:1px solid var(--line)}.bottom h2{font-size:30px;letter-spacing:-.04em;margin:0 0 9px}.bottom p{color:var(--muted);font-size:13px;line-height:1.5;margin:0;max-width:650px}.by{text-align:right;color:#888b8f;font-size:12px;line-height:1.6}
 @media(max-width:820px){header{margin-bottom:42px}.steps,.kpis{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.ai{grid-template-columns:1fr}.bottom{display:block}.by{text-align:left;margin-top:22px}.kpi:nth-child(2){border:0}h1{font-size:52px}}@media(max-width:520px){.steps,.kpis{grid-template-columns:1fr}.kpi{border-right:0;border-bottom:1px solid var(--line);padding-bottom:14px}.wrap{padding:22px 16px 40px}.badge{display:none}}
+
+.match{margin-top:92px;padding-top:58px;border-top:1px solid var(--line)}
+.match-kicker{color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+.match h2{font-size:clamp(38px,5vw,62px);line-height:1;letter-spacing:-.045em;margin:0 0 18px}
+.match-intro{max-width:720px;color:#aeb0b3;font-size:16px;line-height:1.55;margin:0 0 34px}
+.match-head,.match-row{display:grid;grid-template-columns:.72fr 1.28fr;gap:30px}
+.match-head{padding:0 22px 12px;color:#6f7276;font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+.match-row{padding:22px;border-top:1px solid var(--line);align-items:start;transition:.25s}
+.match-row:hover{background:#101113;border-radius:16px}
+.need{font-size:15px;font-weight:700}
+.evidence{font-size:14px;line-height:1.55;color:#c7c9cb}
+.evidence b{color:var(--text)}
+.tag{display:inline-block;margin-top:9px;padding:5px 8px;border:1px solid #34363a;border-radius:999px;color:#92959a;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.tag.direct{border-color:rgba(217,255,79,.38);color:var(--accent)}
+.closing{margin-top:48px;background:linear-gradient(145deg,#151619,#0d0e0f);border:1px solid var(--line);border-radius:24px;padding:32px}
+.closing h3{font-size:30px;letter-spacing:-.035em;margin:0 0 13px}
+.closing p{max-width:760px;color:#b8babc;line-height:1.6;font-size:15px;margin:0}
+@media(max-width:700px){.match{margin-top:64px}.match-head{display:none}.match-row{grid-template-columns:1fr;gap:8px;padding:20px 4px}.need{color:var(--accent)}}
 </style></head>
 <body><div class="wrap">
 <header><div class="brand">HELIOCORE</div><div class="badge">Independent application concept</div></header>
@@ -35,5 +53,32 @@ header{display:flex;justify-content:space-between;align-items:center;gap:20px;ma
 <div class="funnel-row"><div class="flab">Communication</div><div class="barbg"><div class="bar" style="width:82%"></div></div><div class="fnum">82%</div></div><div class="funnel-row"><div class="flab">Product</div><div class="barbg"><div class="bar" style="width:74%"></div></div><div class="fnum">74%</div></div><div class="funnel-row"><div class="flab">Tools</div><div class="barbg"><div class="bar" style="width:91%"></div></div><div class="fnum">91%</div></div>
 </section><section class="card"><div class="card-head">Needs attention</div><div style="font-size:17px;line-height:1.9"><b>8</b> learning tasks are late<br><b>5</b> employees may need support<br><b>3</b> manager follow-ups are due</div></section></div>
 <section class="ai"><div class="ai-tag">AI summary</div><div class="ai-text">Product knowledge has the lowest assessment result. 5 employees may need support. The L&D team can focus on them first.</div></section>
-<section class="bottom"><div><h2>Less manual tracking.<br>More time for people.</h2><p>I work with HR data, automation, onboarding materials and employee communications. This small concept shows how I would bring these skills into L&D.</p></div><div class="by">Olesia Botsieva<br>Application concept · 2026</div></section>
+<section class="bottom"><div><h2>Less manual tracking.<br>More time for people.</h2><p>A small concept of how I would connect learning, automation and HR data in L&D.</p></div><div class="by">Olesia Botsieva<br>Application concept · 2026</div></section>
+
+<section class="match">
+<div class="match-kicker">02 · Role match</div>
+<h2>Why my experience fits.</h2>
+<p class="match-intro">My main background is Employer Brand and Recruitment Marketing. But onboarding, learning, HR data, automation and employee communities have already been part of my work.</p>
+<div class="match-head"><div>HelioCore need</div><div>My real experience</div></div>
+
+<div class="match-row"><div class="need">Onboarding & retention</div><div class="evidence"><b>Built an onboarding course for HR managers at 2GIS</b> to help new team members get up to speed faster. I also contributed to onboarding and welcome materials across three companies.<br><span class="tag direct">Direct experience</span></div></div>
+
+<div class="match-row"><div class="need">Learning programs</div><div class="evidence"><b>Designed an internal HR onboarding course from scratch.</b> I also create structured learning content and am developing my own Employer Brand course.<br><span class="tag direct">Direct experience</span></div></div>
+
+<div class="match-row"><div class="need">Automation & process improvement</div><div class="evidence"><b>Worked on automating a junior internship process at 2GIS.</b> Around 80% of the first stage moved into a Telegram bot, so participants reached the office stage already prepared.<br><span class="tag direct">Direct experience</span></div></div>
+
+<div class="match-row"><div class="need">Employee assessments & data</div><div class="evidence"><b>Built HR analytics and recruitment funnel reporting at 2GIS.</b> I work with conversion, rejection reasons, cost metrics and data-based process improvement.<br><span class="tag">Transferable experience</span></div></div>
+
+<div class="match-row"><div class="need">LMS / HR systems</div><div class="evidence"><b>I have not administered SANA LMS yet.</b> I do work with ATS data, HR systems and digital workflows, so the systems logic is familiar to me.<br><span class="tag">Learning area</span></div></div>
+
+<div class="match-row"><div class="need">Communities & employee development</div><div class="evidence"><b>Built professional interest communities inside R&amp;D</b> and brought people together in working groups and internal activities.<br><span class="tag direct">Direct experience</span></div></div>
+
+<div class="match-row"><div class="need">AI & process optimization</div><div class="evidence"><b>Use AI tools in my daily work</b> for research, content, analysis and workflow improvement — with a focus on reducing repetitive manual work.<br><span class="tag direct">Hands-on experience</span></div></div>
+
+<div class="match-row"><div class="need">Stakeholder management</div><div class="evidence"><b>12+ years of cross-functional project work.</b> I collaborate with HR, tech teams, content, analytics and external partners and move projects from idea to delivery.<br><span class="tag direct">Strong experience</span></div></div>
+
+<div class="match-row"><div class="need">English</div><div class="evidence"><b>B2 / Upper-Intermediate.</b> I work with professional content and communication in English.<br><span class="tag">Working proficiency</span></div></div>
+
+<div class="closing"><h3>A new title. Not a new direction.</h3><p>I did not start with an L&amp;D title. But learning, onboarding, automation and employee development have already been part of my work. Now I want to make L&amp;D the main focus of my role.</p></div>
+</section>
 </div><script>const steps=[...document.querySelectorAll('.step')];let i=0;setInterval(()=>{steps.forEach(s=>s.classList.remove('active'));i=(i+1)%steps.length;steps[i].classList.add('active')},1500);</script></body></html>
