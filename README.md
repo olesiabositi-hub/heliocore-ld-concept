@@ -1,8 +1,7 @@
-# HelioCore L&D Flow
+# From Need to Impact
 
-Independent application concept by Olesia Botsieva for the Learning & Development Specialist role.
+A short L&D operating methodology by Olesia Botsieva.
 
-- Synthetic demo data
-- Based only on the public job description
-- Not an internal HelioCore product
-- Focus: onboarding, learning operations, assessments, automation, HR analytics and AI
+Six steps: Understand → Define → Design → Deliver → Measure → Improve.
+
+Built as a work sample for Learning & Development roles. The Sana Learn references are based on public product documentation; no internal company processes or data are assumed.
