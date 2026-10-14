@@ -83,6 +83,63 @@ ol.steps p{margin:0;color:var(--text)}
 .time b{color:var(--ink);font-size:14px}
 @media (max-width:560px){.time{grid-template-columns:1fr 1fr;row-gap:16px}.time::before{display:none}}
 
+/* build demo */
+.build{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:22px;display:grid;gap:18px}
+.build-h{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.btn{all:unset;cursor:pointer;background:var(--ink);color:var(--bg);font-weight:600;font-size:15px;padding:10px 18px;border-radius:999px}
+.btn:hover{opacity:.9}
+.btn:focus-visible,.nav button:focus-visible,.opt:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+.pipe{display:grid;grid-template-columns:minmax(0,1fr) 120px minmax(0,1fr);gap:14px;align-items:center}
+@media (max-width:640px){.pipe{grid-template-columns:1fr}}
+.col{display:grid;gap:8px}
+.col .lab{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.src{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:14px;line-height:1.35;transition:opacity .4s,transform .4s,border-color .4s}
+.src small{display:block;font-size:12px;color:var(--muted)}
+.src.on{border-color:var(--coral)}
+.engine{display:grid;gap:8px;justify-items:center;text-align:center}
+.engine .box{width:100%;aspect-ratio:1;max-width:120px;border-radius:24px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-family:var(--serif);font-size:22px;position:relative;overflow:hidden}
+.engine .box::after{content:"";position:absolute;left:0;bottom:0;height:6px;width:var(--p,100%);background:var(--coral);transition:width .3s}
+.engine small{font-size:12px;color:var(--muted)}
+@media (max-width:640px){.engine .box{max-width:none;aspect-ratio:auto;padding:14px}}
+.out{background:var(--mint);border-radius:12px;padding:9px 12px;font-size:14px;display:flex;justify-content:space-between;gap:10px;transition:opacity .4s,transform .4s}
+.out span:last-child{color:var(--muted);font-size:12px;white-space:nowrap}
+.hide{opacity:.15;transform:translateY(6px)}
+.src.hide{transform:translateX(-6px)}
+.edits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;transition:opacity .5s}
+@media (max-width:640px){.edits{grid-template-columns:1fr}}
+.edits div{border-top:2px solid var(--coral);padding-top:8px;font-size:14px;line-height:1.4}
+.edits b{display:block;color:var(--ink);font-size:13px}
+
+/* course player */
+.player{background:var(--paper);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 14px 40px -26px rgba(21,63,54,.45)}
+.p-top{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--bg);flex-wrap:wrap}
+.p-top b{font-family:var(--serif);font-weight:400;font-size:18px;color:var(--ink)}
+.dots{display:flex;gap:6px}
+.dots i{width:28px;height:5px;border-radius:3px;background:var(--line)}
+.dots i.on{background:var(--coral)}
+.p-body{padding:24px 22px;min-height:300px;display:grid;gap:14px;align-content:start}
+.p-body .kicker{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--coral)}
+.p-body h3{font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.2}
+.p-body ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.from{font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+.from b{color:var(--ink);font-weight:600}
+.agenda{display:grid;gap:6px}
+.agenda div{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;background:var(--bg);border-radius:10px;padding:9px 12px;font-size:15px}
+.agenda span{font-family:var(--serif);color:var(--coral)}
+.case{background:var(--mint);border-radius:14px;padding:14px 16px;font-size:15px;line-height:1.55}
+.opts{display:grid;gap:8px}
+.opt{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 14px;font-size:15px;line-height:1.45}
+.opt:hover{border-color:var(--ink)}
+.opt.right{border-color:var(--ink);background:var(--mint)}
+.opt.wrong{border-color:var(--coral)}
+.fb{font-size:14px;line-height:1.5;padding:10px 12px;border-radius:10px;background:var(--bg)}
+.nav{display:flex;justify-content:space-between;gap:10px;padding:14px 18px;border-top:1px solid var(--line)}
+.nav button{all:unset;cursor:pointer;font-size:15px;font-weight:600;padding:8px 16px;border-radius:999px;border:1px solid var(--line);color:var(--ink)}
+.nav button.next{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.nav button[disabled]{opacity:.35;cursor:default}
+.tagline{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.src,.out,.edits,.engine .box::after{transition:none}}
+
 footer{margin-top:48px;font-size:14px;color:var(--muted)}
 </style>
 </head>
@@ -156,7 +213,107 @@ footer{margin-top:48px;font-size:14px;color:var(--muted)}
   </div>
   <p class="note">Чтобы было честно, сравниваю тех, кто прошёл курс, с теми, кто ещё не проходил.</p>
 
+  <hr>
+
+  <h2>Пример: как собирается первый модуль</h2>
+  <p style="margin-bottom:18px">Тема «1:1 с командой». Вот что я беру и откуда, что делает Sana и что дорабатываю сама.</p>
+  <div class="build">
+    <div class="build-h"><span class="tagline">Вымышленные данные, схема вместо скриншотов</span><button class="btn" id="play">Собрать курс</button></div>
+    <div class="pipe">
+      <div class="col" id="srcs">
+        <span class="lab">Беру</span>
+        <div class="src" data-k="1"><small>Итоги ревью</small>В 6 из 14 команд сотрудники пишут, что 1:1 бывают редко</div>
+        <div class="src" data-k="2"><small>Документы HR</small>Шаблон 1:1 и регламент ревью</div>
+        <div class="src" data-k="3"><small>Интервью с тимлидами</small>Как лучшие руководители проводят 1:1</div>
+        <div class="src" data-k="4"><small>Разговоры с командами</small>Типичные сложные ситуации</div>
+      </div>
+      <div class="engine"><div class="box" id="eng">Sana</div><small id="engTxt">черновик курса из документов</small></div>
+      <div class="col" id="outs">
+        <span class="lab">Получаю черновик</span>
+        <div class="out"><span>Зачем нужен 1:1</span><span>из ревью</span></div>
+        <div class="out"><span>Структура встречи</span><span>из шаблона</span></div>
+        <div class="out"><span>Как это делают у нас</span><span>из интервью</span></div>
+        <div class="out"><span>Ситуация-тест</span><span>из разговоров</span></div>
+        <div class="out"><span>Задание на работе</span><span>из цели курса</span></div>
+      </div>
+    </div>
+    <div class="edits" id="edits">
+      <div><b>Моя доработка</b>Убрала общую теорию, оставила одну страницу</div>
+      <div><b>Моя доработка</b>Добавила реальный кейс тимлида вместо выдуманного</div>
+      <div><b>С экспертом</b>Проверили тест: правильный ответ не очевиден, но однозначен</div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:36px">Как выглядит модуль для руководителя</h2>
+  <div class="player">
+    <div class="p-top"><b>Модуль 1 · 1:1 с командой</b><div class="dots" id="dots"></div></div>
+    <div class="p-body" id="card"></div>
+    <div class="nav"><button id="prev">Назад</button><button class="next" id="next">Дальше</button></div>
+  </div>
+  <p class="tagline" style="margin-top:10px">15 минут в Sana, потом практика в группе и задание на работе.</p>
+
   <footer>Olesia Botsieva · Learning &amp; Development</footer>
 </main>
+
+<script>
+(function(){
+  // build animation: final state at rest, replay on click
+  const srcs=[...document.querySelectorAll('.src')],outs=[...document.querySelectorAll('.out')],edits=document.getElementById('edits'),eng=document.getElementById('eng'),engTxt=document.getElementById('engTxt');
+  let timers=[];
+  function play(){
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    timers.forEach(clearTimeout);timers=[];
+    srcs.forEach(s=>{s.classList.add('hide');s.classList.remove('on')});outs.forEach(o=>o.classList.add('hide'));edits.style.opacity=.15;eng.style.setProperty('--p','0%');engTxt.textContent='жду материалы';
+    srcs.forEach((s,i)=>timers.push(setTimeout(()=>{s.classList.remove('hide');s.classList.add('on');eng.style.setProperty('--p',((i+1)*20)+'%')},300+i*450)));
+    timers.push(setTimeout(()=>{engTxt.textContent='собирает черновик…';eng.style.setProperty('--p','90%')},300+4*450));
+    outs.forEach((o,i)=>timers.push(setTimeout(()=>o.classList.remove('hide'),2600+i*380)));
+    timers.push(setTimeout(()=>{eng.style.setProperty('--p','100%');engTxt.textContent='черновик готов';srcs.forEach(s=>s.classList.remove('on'))},2600+5*380));
+    timers.push(setTimeout(()=>{edits.style.opacity=1},2600+5*380+400));
+  }
+  document.getElementById('play').onclick=play;
+
+  // course player
+  const C=[
+    {k:'1 из 5 · Зачем',t:'Зачем нужен 1:1',
+     h:'<p>1:1 — это регулярная встреча руководителя с сотрудником на 30 минут. Здесь говорят не о задачах спринта, а о человеке: что мешает, куда хочет расти, что нужно от руководителя.</p><ul><li>проблемы видно раньше, чем они попадут в ревью;</li><li>на ревью нет сюрпризов ни для кого;</li><li>человек чувствует, что его развитие кому-то важно.</li></ul>',
+     f:'<b>Откуда:</b> итоги ревью. В 6 из 14 команд сотрудники написали, что 1:1 бывают редко или не бывают совсем.'},
+    {k:'2 из 5 · Как',t:'Структура встречи на 30 минут',
+     h:'<div class="agenda"><div><span>5 мин</span>Как дела, что изменилось с прошлой встречи</div><div><span>15 мин</span>Темы сотрудника: он приходит со своим списком</div><div><span>5 мин</span>Обратная связь в обе стороны</div><div><span>5 мин</span>Договорённости: кто, что и к какому сроку</div></div><p>Встреча раз в две недели. Договорённости записываем в общий документ, чтобы начать с них в следующий раз.</p>',
+     f:'<b>Откуда:</b> шаблон 1:1 из документов HR. Sana собрала из него эту карточку.'},
+    {k:'3 из 5 · Как у нас',t:'Как это делает тимлид QA',
+     h:'<div class="case">«Раньше я отменял 1:1, когда горел релиз. Потом заметил, что именно в такие недели люди и выгорают. Теперь 1:1 не переносится, максимум сокращается до 15 минут. А первый вопрос всегда один: "Что тебе сейчас мешает?"»</div><p>Главное: 1:1 — это время сотрудника, а не отчёт по задачам.</p>',
+     f:'<b>Откуда:</b> интервью с руководителями. Пример вымышленный, в реальном курсе здесь будет история нашего тимлида.'},
+    {k:'4 из 5 · Проверка',t:'Сотрудник третий раз срывает срок. Что скажете на 1:1?',quiz:true,
+     f:'<b>Откуда:</b> ситуации, которые чаще всего называли команды и тимлиды.'},
+    {k:'5 из 5 · Практика',t:'Задание до следующей встречи группы',
+     h:'<ul><li>Проведите 1:1 по шаблону с двумя сотрудниками.</li><li>Запишите договорённости в общий документ.</li><li>Принесите на разбор: что получилось и где было сложно.</li></ul><p>Через две недели обсуждаем в группе руководителей, потом переходим к теме «Обратная связь».</p>',
+     f:'<b>Откуда:</b> цель курса: «проводит 1:1 с каждым раз в две недели». Через три месяца проверяем по опросу команды.'}
+  ];
+  const Q=[
+    ['«Это уже третий раз. В следующий раз будут последствия»','Звучит понятно, но вы не узнали причину. Если проблема в перегрузке или неясной задаче, предупреждение её не решит.',false],
+    ['«Вижу, что сроки сдвигаются уже третий раз. Что мешает? Давай разберёмся вместе»','Вы называете факт без оценки и выясняете причину. Дальше договариваетесь о конкретном шаге и сроке.',true],
+    ['Ничего не говорить на 1:1, а обсудить на ревью','На ревью это станет сюрпризом. Чем раньше разговор, тем больше шансов всё исправить.',false]
+  ];
+  let i=0;
+  const card=document.getElementById('card'),dots=document.getElementById('dots'),prev=document.getElementById('prev'),next=document.getElementById('next');
+  dots.innerHTML=C.map(()=>'<i></i>').join('');
+  function show(){
+    const c=C[i];
+    let h='<span class="kicker">'+c.k+'</span><h3>'+c.t+'</h3>';
+    if(c.quiz){h+='<div class="opts">'+Q.map((q,j)=>'<button class="opt" data-j="'+j+'">'+q[0]+'</button>').join('')+'</div><div class="fb" id="fb" hidden></div>'}
+    else h+=c.h;
+    h+='<p class="from">'+c.f+'</p>';
+    card.innerHTML=h;
+    [...dots.children].forEach((d,j)=>d.classList.toggle('on',j<=i));
+    prev.disabled=i===0;next.disabled=i===C.length-1;
+    card.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const q=Q[+b.dataset.j];card.querySelectorAll('.opt').forEach(x=>x.classList.remove('right','wrong'));
+      b.classList.add(q[2]?'right':'wrong');const fb=document.getElementById('fb');fb.hidden=false;fb.textContent=(q[2]?'Верно. ':'Не совсем. ')+q[1];
+    });
+  }
+  prev.onclick=()=>{if(i>0){i--;show()}};next.onclick=()=>{if(i<C.length-1){i++;show()}};
+  show();
+})();
+</script>
 </body>
 </html>
