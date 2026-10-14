@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Курс для руководителей</title>
+<style>
+/* Same visual family as Olesia's "From Need to Impact" page: warm paper, deep green ink, coral accent, serif headings.
+   Layout: one narrow reading column, numbered steps (a real sequence), then a short evaluation list. */
+:root{
+  --bg:#f5efe4; --paper:#fbf8f2; --ink:#153f36; --text:#263c37; --muted:#6f7772;
+  --coral:#d96d55; --mint:#e5f0e8; --line:#dacfc0;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121a17; --paper:#1a2420; --ink:#cfe6dc; --text:#dfe7e3; --muted:#9aa7a1;
+  --coral:#ec8c76; --mint:#1f3229; --line:#2e3d36; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121a17; --paper:#1a2420; --ink:#cfe6dc; --text:#dfe7e3; --muted:#9aa7a1;
+  --coral:#ec8c76; --mint:#1f3229; --line:#2e3d36; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.65}
+.page{max-width:760px;margin:0 auto;padding-inline:22px;padding-block:56px 72px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--coral)}
+h1{font-family:var(--serif);font-weight:400;color:var(--ink);font-size:clamp(34px,6vw,52px);line-height:1.08;margin:12px 0 16px;text-wrap:balance}
+h2{font-family:var(--serif);font-weight:400;color:var(--ink);font-size:28px;line-height:1.2;margin:0 0 18px}
+.lead{font-size:19px;color:var(--muted);max-width:54ch;margin:0}
+.by{margin-top:22px;font-size:14px;color:var(--muted)}
+.by b{color:var(--ink)}
+hr{border:0;border-top:1px solid var(--line);margin:44px 0}
+ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:0;counter-reset:s}
+ol.steps>li{counter-increment:s;display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 16px;padding:20px 0;border-top:1px solid var(--line)}
+ol.steps>li:last-child{border-bottom:1px solid var(--line)}
+ol.steps>li::before{content:counter(s);grid-row:span 2;font-family:var(--serif);font-size:30px;line-height:1;color:var(--coral)}
+ol.steps h3{margin:0;font-size:18px;color:var(--ink)}
+ol.steps p{margin:0;color:var(--text)}
+.quote{font-style:italic;color:var(--muted)}
+.eval{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px}
+.eval ul{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.eval li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:baseline;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+.eval li:last-child{border-bottom:0;padding-bottom:0}
+.eval b{color:var(--ink)}
+.eval span{color:var(--muted);font-size:15px}
+.eval em{font-style:normal;font-size:13px;color:var(--coral);white-space:nowrap}
+@media (max-width:520px){.eval li{grid-template-columns:1fr}}
+.note{margin-top:20px;background:var(--mint);border-radius:14px;padding:16px 18px}
+/* figures */
+.fig{grid-column:2;margin-top:14px;display:grid;gap:8px}
+@media (max-width:560px){.fig{grid-column:1/-1}}
+.cap{font-size:13px;color:var(--muted)}
+.loop{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+@media (max-width:560px){.loop{grid-template-columns:1fr 1fr}}
+.loop div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.35;display:grid;gap:2px;position:relative}
+.loop div:first-child{background:var(--mint);border-color:transparent}
+.loop small{font-size:12px;color:var(--muted)}
+.loop b{color:var(--ink);font-size:14px}
+.weeks{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px;font-size:12px}
+.weeks span{text-align:center;color:var(--muted)}
+.weeks i{grid-column:span 2;font-style:normal;background:var(--ink);color:var(--bg);border-radius:6px;padding:6px 4px;text-align:center;font-size:12px;line-height:1.25}
+.weeks i:nth-of-type(even){background:var(--coral);color:#fff}
+.mock{background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 14px 40px -26px rgba(21,63,54,.45)}
+.mock-top{display:flex;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--bg)}
+.mock-top i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.mock-top span{margin-left:8px;font-size:12px;color:var(--muted)}
+.mock-body{padding:16px;display:grid;gap:12px}
+.mock-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.mock-h b{font-family:var(--serif);font-weight:400;font-size:20px;color:var(--ink)}
+.pill{font-size:12px;border-radius:999px;padding:3px 10px;background:var(--mint);color:var(--ink);white-space:nowrap}
+.mods{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.mods li{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14px;padding:8px 10px;border-radius:10px;background:var(--bg)}
+.mods li i{font-style:normal;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;background:var(--line);color:var(--ink)}
+.mods li.done i{background:var(--ink);color:var(--bg)}
+.mods li span:last-child{font-size:12px;color:var(--muted);white-space:nowrap}
+.meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;font-size:13px}
+@media (max-width:560px){.meta{grid-template-columns:1fr}}
+.meta div{border-top:1px solid var(--line);padding-top:8px;display:grid;gap:2px}
+.meta small{color:var(--muted);font-size:12px}
+.time{position:relative;margin:6px 0 22px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.time::before{content:"";position:absolute;left:0;right:0;top:9px;height:2px;background:var(--line)}
+.time div{position:relative;display:grid;gap:6px;font-size:13px;line-height:1.35;color:var(--muted)}
+.time div::before{content:"";width:18px;height:18px;border-radius:50%;background:var(--paper);border:3px solid var(--coral)}
+.time b{color:var(--ink);font-size:14px}
+@media (max-width:560px){.time{grid-template-columns:1fr 1fr;row-gap:16px}.time::before{display:none}}
+
+footer{margin-top:48px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="eyebrow">Learning &amp; Development · заметки</div>
+  <h1>Как я бы делала курс для руководителей</h1>
+  <p class="lead">Восемь шагов: от вопроса «зачем нам этот курс» до проверки, что в командах что-то изменилось. Курс собирается в Sana Learn.</p>
+  <p class="by"><b>Olesia Botsieva</b> · Learning &amp; Development</p>
+
+  <hr>
+
+  <h2>Шаги</h2>
+  <ol class="steps">
+    <li><h3>Понять, зачем он нужен</h3><p>Сначала говорю с заказчиком: какая проблема у бизнеса? Например, тимлидами стали сильные специалисты, но людьми управлять не умеют, или ревью проходят формально. Сразу договариваемся, по каким цифрам поймём, что курс помог.</p></li>
+    <li><h3>Найти, что реально проседает</h3><p>Смотрю итоги ревью, eNPS и текучесть по командам, говорю с несколькими руководителями и их сотрудниками. Обычно набирается 3–4 темы, например: 1:1, обратная связь, делегирование, как проводить ревью.</p></li>
+    <li><h3>Записать цели как действия</h3><p>Не «понимает важность обратной связи», а «проводит 1:1 с каждым раз в две недели». Так потом легко проверить результат.</p></li>
+    <li><h3>Собрать программу</h3><p>Не только видео. На каждую тему: короткий курс в Sana на 15–20 минут, потом живая практика в группе, потом задание на работе и разбор. Одна тема раз в две недели, вся программа примерно на два месяца.</p>
+      <div class="fig">
+        <div class="loop">
+          <div><small>1 · Sana</small><b>Короткий курс</b>15–20 минут</div>
+          <div><small>2 · группа</small><b>Практика</b>ролевые ситуации</div>
+          <div><small>3 · работа</small><b>Задание</b>сделать в своей команде</div>
+          <div><small>4 · группа</small><b>Разбор</b>что получилось</div>
+        </div>
+        <div class="weeks"><span>нед 1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><i>1:1</i><i>Обратная связь</i><i>Делегирование</i><i>Ревью</i></div>
+        <p class="cap">Один цикл на каждую тему, четыре темы за восемь недель.</p>
+      </div></li>
+    <li><h3>Сделать материалы</h3><p>Беру внутренние документы и примеры от лучших руководителей, Sana собирает из них черновик курса. Дальше я дорабатываю его, добавляю реальные кейсы и согласовываю с экспертом. Тесты делаю на ситуации, а не на запоминание: <span class="quote">«сотрудник третий раз срывает срок, что вы скажете?»</span></p></li>
+    <li><h3>Настроить в Sana</h3><p>Программа с порядком модулей, дедлайнами и напоминаниями. Новые руководители попадают в неё автоматически. У курса есть владелец и дата, когда его нужно пересмотреть.</p>
+      <div class="fig">
+        <div class="mock" role="img" aria-label="Схема программы в Sana: четыре модуля, автоматическая запись и владелец курса">
+          <div class="mock-top"><i></i><i></i><i></i><span>Sana Learn · Программа</span></div>
+          <div class="mock-body">
+            <div class="mock-h"><b>Новые руководители</b><span class="pill">12 участников</span></div>
+            <ul class="mods">
+              <li class="done"><i>1</i><span>1:1 с командой</span><span>до 14 ноября</span></li>
+              <li class="done"><i>2</i><span>Обратная связь</span><span>до 28 ноября</span></li>
+              <li><i>3</i><span>Делегирование</span><span>до 12 декабря</span></li>
+              <li><i>4</i><span>Как проводить ревью</span><span>до 26 декабря</span></li>
+            </ul>
+            <div class="meta">
+              <div><small>Кто попадает</small>все с ролью «руководитель»</div>
+              <div><small>Напоминания</small>за 3 дня до срока</div>
+              <div><small>Владелец · пересмотр</small>L&amp;D · апрель 2027</div>
+            </div>
+          </div>
+        </div>
+        <p class="cap">Схема настройки, не скриншот. Даты и участники для примера.</p>
+      </div></li>
+    <li><h3>Пилот</h3><p>Сначала одна группа из 10–15 человек. Собираю отзывы после каждой темы и правлю программу, потом запускаю для всех.</p></li>
+    <li><h3>Оценить результат</h3><p>Смотрю на четыре вещи, они ниже.</p></li>
+  </ol>
+
+  <hr>
+
+  <h2>Как понять, что курс сработал</h2>
+  <div class="time" aria-hidden="true">
+    <div><b>Сразу</b>опрос после темы</div>
+    <div><b>Конец курса</b>тесты до и после</div>
+    <div><b>3 месяца</b>опрос команды</div>
+    <div><b>Полгода</b>eNPS, текучесть</div>
+  </div>
+  <div class="eval">
+    <ul>
+      <li><div><b>Понравилось и было полезно</b><br><span>Опрос после каждой темы</span></div><em>сразу</em></li>
+      <li><div><b>Поняли</b><br><span>Тесты на ситуации до и после</span></div><em>начало и конец</em></li>
+      <li><div><b>Делают иначе</b><br><span>Короткий опрос команды руководителя до курса и после</span></div><em>через 3 месяца</em></li>
+      <li><div><b>В командах что-то изменилось</b><br><span>eNPS, текучесть, как проходят ревью</span></div><em>через полгода</em></li>
+    </ul>
+  </div>
+  <p class="note">Чтобы было честно, сравниваю тех, кто прошёл курс, с теми, кто ещё не проходил.</p>
+
+  <footer>Olesia Botsieva · Learning &amp; Development</footer>
+</main>
+</body>
+</html>
