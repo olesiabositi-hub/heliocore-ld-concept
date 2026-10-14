@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Генератор плана развития</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a linear story (problem → solution → process → live demo → Sana → savings → quality).
+   Color is meaning: orange = employee, blue = manager, green = AI result. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#111827; --muted:#5B6476; --line:#DDE2EB; --soft:#EBEEF4;
+  --emp:#F2711C; --emp-soft:#FDEBDD; --emp-ink:#A9480A;
+  --mgr:#2D5BE3; --mgr-soft:#E3EAFC; --mgr-ink:#1E43B0;
+  --ai:#14966A; --ai-soft:#DBF3E9; --ai-ink:#0B6B4B;
+  --hero:#111827; --hero-fg:#F3F5F9; --hero-muted:#A6AFC2;
+  --display:"Unbounded","Golos Text",system-ui,sans-serif;
+  --body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E131E; --surface:#161D2C; --ink:#EAEEF6; --muted:#9AA4B8; --line:#283248; --soft:#1C2538;
+  --emp:#FF8A3D; --emp-soft:#3A2414; --emp-ink:#FFB27D;
+  --mgr:#6F93FF; --mgr-soft:#1B2747; --mgr-ink:#A9BEFF;
+  --ai:#3CCB94; --ai-soft:#11342A; --ai-ink:#7FE3BB;
+  --hero:#070A11; --hero-fg:#EAEEF6; --hero-muted:#8D97AB; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E131E; --surface:#161D2C; --ink:#EAEEF6; --muted:#9AA4B8; --line:#283248; --soft:#1C2538;
+  --emp:#FF8A3D; --emp-soft:#3A2414; --emp-ink:#FFB27D;
+  --mgr:#6F93FF; --mgr-soft:#1B2747; --mgr-ink:#A9BEFF;
+  --ai:#3CCB94; --ai-soft:#11342A; --ai-ink:#7FE3BB;
+  --hero:#070A11; --hero-fg:#EAEEF6; --hero-muted:#8D97AB; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h2{font-size:clamp(24px,3.6vw,36px);font-weight:700;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:500}
+p{margin:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.lede{font-size:18px;color:var(--muted);max-width:60ch}
+.tag{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.emp{color:var(--emp-ink)} .mgr{color:var(--mgr-ink)} .aic{color:var(--ai-ink)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px}
+.chip.e{background:var(--emp-soft);color:var(--emp-ink)} .chip.m{background:var(--mgr-soft);color:var(--mgr-ink)} .chip.a{background:var(--ai-soft);color:var(--ai-ink)}
+.chip i{width:8px;height:8px;border-radius:50%;background:currentColor}
+
+/* hero */
+.hero{background:var(--hero);color:var(--hero-fg);padding-block:56px 64px}
+.hero .wrap{display:grid;gap:28px}
+.hero .tag{color:var(--hero-muted)}
+.hero h1{font-size:clamp(30px,5.6vw,60px);font-weight:800;letter-spacing:-.02em;max-width:18ch}
+.hero h1 em{font-style:normal;color:var(--emp)}
+.hero p{color:var(--hero-muted);font-size:18px;max-width:58ch}
+.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;border-top:1px solid #ffffff22;padding-top:24px}
+@media (max-width:640px){.hero-stats{grid-template-columns:1fr}}
+.hero-stats b{display:block;font-family:var(--display);font-size:clamp(28px,4vw,40px);font-weight:700;color:var(--hero-fg)}
+.hero-stats span{font-size:14px;color:var(--hero-muted)}
+.byline{font-size:14px;color:var(--hero-muted)}
+.byline b{color:var(--hero-fg)}
+
+/* nav */
+nav.steps{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.steps .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+nav.steps a{flex:none;text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;padding:6px 12px;border-radius:999px;white-space:nowrap}
+nav.steps a b{font-family:var(--mono);font-size:12px;margin-right:6px;color:var(--muted)}
+nav.steps a.on{background:var(--ink);color:var(--bg)}
+nav.steps a.on b{color:var(--bg)}
+nav.steps a:focus-visible{outline:2px solid var(--mgr);outline-offset:2px}
+
+section{padding-block:72px;display:grid;gap:28px;scroll-margin-top:56px}
+section+section{border-top:1px solid var(--line)}
+.shead{display:grid;gap:12px}
+.num{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+/* problem */
+.prob{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.prob{grid-template-columns:1fr}}
+.prob div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:8px;align-content:start}
+.prob b{font-family:var(--display);font-size:30px;color:var(--emp-ink)}
+.prob p{color:var(--muted);font-size:15px}
+
+/* solution equation */
+.eq{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:stretch;gap:10px}
+@media (max-width:860px){.eq{grid-template-columns:1fr}.eq .op{transform:rotate(90deg);justify-self:center}}
+.eq .box{border-radius:14px;padding:20px;display:grid;gap:6px;align-content:start}
+.eq .box h3{font-size:16px}
+.eq .box p{font-size:14px;color:var(--muted)}
+.eq .op{align-self:center;font-family:var(--display);font-size:24px;color:var(--muted)}
+.b-e{background:var(--emp-soft)} .b-m{background:var(--mgr-soft)} .b-a{background:var(--ai-soft)} .b-s{background:var(--surface);border:1px solid var(--line)}
+
+/* process */
+.flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;position:relative}
+@media (max-width:860px){.flow{grid-template-columns:1fr}}
+.fs{position:relative;padding:18px 14px 18px 0;display:grid;gap:8px;align-content:start}
+.fs .dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-weight:600;font-size:14px;background:var(--surface);border:2px solid var(--line);position:relative;z-index:1}
+.fs::before{content:"";position:absolute;top:35px;left:36px;right:0;height:2px;background:var(--line)}
+.fs:last-child::before{display:none}
+@media (max-width:860px){.fs{padding:0 0 22px 52px}.fs .dot{position:absolute;left:0;top:0}.fs::before{top:36px;left:17px;width:2px;height:auto;bottom:0;right:auto}}
+.fs .when{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.fs h3{font-size:15px}
+.fs p{font-size:14px;color:var(--muted)}
+.fs.ld .dot{background:var(--ai);border-color:var(--ai);color:#fff}
+.fs.ld .badge{justify-self:start;font-size:12px;font-weight:700;background:var(--ai);color:#fff;padding:3px 9px;border-radius:6px}
+.fs.e .dot{border-color:var(--emp);color:var(--emp-ink)}
+.fs.g .dot{border-color:var(--ai);color:var(--ai-ink)}
+
+/* demo */
+.demo{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 20px 50px -30px #0b123055}
+.demo-top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);background:var(--soft)}
+.people{display:flex;flex-wrap:wrap;gap:8px}
+.people button{all:unset;cursor:pointer;display:grid;gap:0;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);min-width:0}
+.people button b{font-size:14px}
+.people button span{font-size:12px;color:var(--muted)}
+.people button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.people button:focus-visible,.gen:focus-visible{outline:2px solid var(--mgr);outline-offset:2px}
+.sample{font-family:var(--mono);font-size:11px;padding:3px 8px;border:1px dashed var(--muted);border-radius:4px;color:var(--muted)}
+.demo-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+@media (max-width:900px){.demo-grid{grid-template-columns:1fr}}
+.pane{padding:22px;display:grid;gap:18px;align-content:start;min-width:0}
+.pane+.pane{border-left:1px solid var(--line)}
+@media (max-width:900px){.pane+.pane{border-left:0;border-top:1px solid var(--line)}}
+.pane-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.qa{display:grid;gap:8px}
+.qa .q{font-size:13px;font-weight:700}
+.ans{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;font-size:14px;line-height:1.5}
+.ans .who{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff}
+.ans.e .who{background:var(--emp)} .ans.m .who{background:var(--mgr)}
+.comps{display:grid;gap:12px}
+.comp{display:grid;gap:4px}
+.comp-l{display:flex;justify-content:space-between;font-size:13px;gap:8px}
+.comp-l .gap{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--emp-ink)}
+.track{position:relative;height:18px}
+.track .rail{position:absolute;left:0;right:0;top:8px;height:2px;background:var(--line)}
+.track .tick{position:absolute;top:5px;width:1px;height:8px;background:var(--line)}
+.track .span{position:absolute;top:7px;height:4px;background:var(--emp);opacity:.35;border-radius:2px}
+.track .pt{position:absolute;top:2px;width:14px;height:14px;border-radius:50%;transform:translateX(-50%);border:2px solid var(--surface)}
+.track .pt.e{background:var(--emp)} .track .pt.m{background:var(--mgr)}
+.scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.gen{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:10px;background:var(--ai);color:#fff;font-weight:700;padding:12px 20px;border-radius:12px;font-size:15px}
+.gen:hover{filter:brightness(1.08)}
+.gen svg{width:18px;height:18px}
+
+/* generation */
+.loader{display:grid;gap:10px;padding:8px 0}
+.lstep{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--muted)}
+.lstep .s{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none}
+.lstep.run .s{border-color:var(--ai);border-top-color:transparent;animation:spin .7s linear infinite}
+.lstep.done{color:var(--ink)}
+.lstep.done .s{background:var(--ai);border-color:var(--ai)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.out{display:grid;gap:18px}
+.out>*{animation:rise .45s ease both}
+.out>*:nth-child(2){animation-delay:.08s}.out>*:nth-child(3){animation-delay:.16s}.out>*:nth-child(4){animation-delay:.24s}.out>*:nth-child(5){animation-delay:.32s}
+@keyframes rise{from{opacity:.0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sum{background:var(--ai-soft);border-radius:12px;padding:16px;font-size:15px}
+.sum .tag{color:var(--ai-ink);display:block;margin-bottom:6px}
+.flag{border-left:3px solid var(--emp);padding:4px 0 4px 12px;font-size:14px}
+.flag b{color:var(--emp-ink)}
+.gaps{display:grid;gap:10px}
+.gapc{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:10px}
+.gapc-h{display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap}
+.gapc-h h3{font-size:15px;font-family:var(--body);font-weight:700}
+.prio{font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.prio.h{background:var(--emp-soft);color:var(--emp-ink)} .prio.mid{background:var(--mgr-soft);color:var(--mgr-ink)}
+.why{font-size:13px;color:var(--muted)}
+.acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.acts{grid-template-columns:1fr}}
+.act{background:var(--soft);border-radius:8px;padding:8px 10px;font-size:13px;line-height:1.4;display:grid;gap:2px;align-content:start}
+.act .k{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.act.sana{background:var(--ai-soft)}
+.act.sana .k{color:var(--ai-ink)}
+.idp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.idp{grid-template-columns:1fr}}
+.idp div{border-top:3px solid var(--ai);padding-top:8px;font-size:13px;display:grid;gap:2px}
+.idp b{font-family:var(--mono);font-size:12px}
+.ready{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;color:var(--muted)}
+.ready b{color:var(--ink)}
+
+/* brief questions */
+.brief-q{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;counter-reset:q}
+.brief-q div{counter-increment:q;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:15px;display:grid;gap:4px}
+.brief-q div::before{content:"Вопрос " counter(q);font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.brief-q span{font-size:13px;color:var(--muted)}
+
+/* sana loop */
+.loop{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.loop{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.loop{grid-template-columns:1fr}}
+.lp{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:8px;align-content:start;position:relative}
+.lp .ic{width:40px;height:40px;border-radius:10px;background:var(--ai-soft);color:var(--ai-ink);display:grid;place-items:center}
+.lp .ic svg{width:22px;height:22px}
+.lp p{font-size:14px;color:var(--muted)}
+.back{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);background:var(--soft);border-radius:10px;padding:12px 16px}
+.back svg{width:20px;height:20px;flex:none;color:var(--ai-ink)}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+@media (max-width:860px){.calc{grid-template-columns:1fr}}
+.calc .pane{gap:22px}
+.field{display:grid;gap:6px}
+.field label{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:500}
+.field output{font-family:var(--mono);font-weight:600;font-size:15px}
+input[type=range]{width:100%;accent-color:var(--ai);height:24px}
+.breakdown{display:grid;gap:6px;font-size:13px}
+.br{display:grid;grid-template-columns:minmax(0,1fr) 54px 54px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.br:last-child{border-bottom:0;font-weight:700}
+.br .mono{text-align:right}
+.br .x{color:var(--emp-ink)} .br .y{color:var(--ai-ink)}
+.res-big{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.res-big div{display:grid;gap:2px}
+.res-big b{font-family:var(--display);font-size:clamp(32px,5vw,48px);font-weight:700;line-height:1.05;color:var(--ai-ink)}
+.res-big span{font-size:14px;color:var(--muted)}
+.weeks{display:grid;gap:14px}
+.wk{display:grid;gap:6px}
+.wk-l{display:flex;justify-content:space-between;font-size:14px;gap:8px}
+.wk-bar{height:30px;background:var(--soft);border-radius:8px;overflow:hidden;position:relative}
+.wk-fill{height:100%;border-radius:8px;transition:width .5s cubic-bezier(.2,.8,.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:10px;color:#fff;font-family:var(--mono);font-size:12px;font-weight:600;white-space:nowrap}
+.wk-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted)}
+
+/* quality */
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.metrics{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.metrics{grid-template-columns:1fr}}
+.mt{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:10px;align-content:start}
+.mt .when{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mt h3{font-size:15px;font-family:var(--body);font-weight:700}
+.mt p{font-size:13px;color:var(--muted)}
+.ring{display:flex;align-items:center;gap:12px}
+.ring svg{width:64px;height:64px;flex:none}
+.ring .t{font-size:13px;color:var(--muted)}
+.ring .t b{display:block;font-family:var(--display);font-size:20px;color:var(--ink)}
+.checks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.checks{grid-template-columns:1fr}}
+.checks div{display:flex;gap:10px;align-items:start;font-size:14px;padding:14px 16px;border-radius:12px;background:var(--ai-soft)}
+.checks svg{width:20px;height:20px;flex:none;color:var(--ai-ink);margin-top:2px}
+
+footer{padding-block:48px 64px;border-top:1px solid var(--line)}
+footer .wrap{display:grid;gap:8px;font-size:14px;color:var(--muted)}
+footer b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="tag">Learning &amp; Development · предложение кандидата</div>
+    <h1>После ревью у каждого есть оценка. <em>Плана развития нет.</em></h1>
+    <p>Я предлагаю генератор, который превращает ответы сотрудника и менеджера в готовый план развития с курсами в Sana Learn. Команда обучения проверяет его за 10 минут вместо часа.</p>
+    <div class="hero-stats">
+      <div><b class="mono">500</b><span>сотрудников проходят ревью раз в год</span></div>
+      <div><b class="mono" id="hs-man">~60 мин</b><span>уходит на один план развития вручную</span></div>
+      <div><b class="mono" id="hs-ai">~10 мин</b><span>с генератором: только проверка</span></div>
+    </div>
+    <div class="byline">Подготовила <b>Олеся</b> · кандидат на роль Learning &amp; Development Specialist · октябрь 2026</div>
+  </div>
+</header>
+
+<nav class="steps" aria-label="Разделы">
+  <div class="wrap" id="navw">
+    <a href="#problem"><b>1</b>Проблема</a>
+    <a href="#solution"><b>2</b>Решение</a>
+    <a href="#process"><b>3</b>Когда подключаемся</a>
+    <a href="#demo"><b>4</b>Демо</a>
+    <a href="#sana"><b>5</b>Sana Learn</a>
+    <a href="#savings"><b>6</b>Экономия</a>
+    <a href="#quality"><b>7</b>Качество</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="problem">
+  <div class="shead">
+    <div class="num">01 · Проблема</div>
+    <h2>Ревью закончилось. Что теперь учить, непонятно.</h2>
+    <p class="lede">Итоги ревью лежат в анкетах и заметках. Чтобы превратить их в обучение, кто-то должен прочитать всё по каждому человеку. На 500 сотрудников это месяцы ручной работы.</p>
+  </div>
+  <div class="prob">
+    <div><b class="mono">~60 мин</b><h3>на одного человека</h3><p>Прочитать две анкеты, найти расхождения, подобрать курсы, написать план и назначить обучение.</p></div>
+    <div><b class="mono">~3 мес</b><h3>до первого курса</h3><p>Пока план дойдёт до последнего сотрудника, мотивация после ревью уже прошла.</p></div>
+    <div><b class="mono">1 курс</b><h3>на всех</h3><p>Под давлением сроков всем назначают общий курс. Он не закрывает конкретную зону роста конкретного человека.</p></div>
+  </div>
+</section>
+
+<section id="solution">
+  <div class="shead">
+    <div class="num">02 · Решение</div>
+    <h2>Один бриф. Один генератор. Готовый план.</h2>
+    <p class="lede">Сотрудник и менеджер отвечают на одни и те же вопросы. ИИ сравнивает ответы и собирает план развития из каталога курсов. Решение принимает человек.</p>
+  </div>
+  <div class="eq">
+    <div class="box b-e"><span class="chip e"><i></i>Сотрудник</span><h3>Отвечает на бриф</h3><p>Результаты, сложности, чему хочет научиться, самооценка</p></div>
+    <div class="op" aria-hidden="true">+</div>
+    <div class="box b-m"><span class="chip m"><i></i>Менеджер</span><h3>Отвечает на тот же бриф</h3><p>Свой взгляд на те же вопросы и оценка компетенций</p></div>
+    <div class="op" aria-hidden="true">→</div>
+    <div class="box b-a"><span class="chip a"><i></i>ИИ-генератор</span><h3>Сводит и предлагает</h3><p>Резюме, расхождения, зоны роста, курсы и практика</p></div>
+    <div class="op" aria-hidden="true">→</div>
+    <div class="box b-s"><span class="chip a"><i></i>Sana Learn</span><h3>Обучение назначено</h3><p>Курсы, напоминания и прогресс в одном месте</p></div>
+  </div>
+
+  <div class="shead" style="margin-top:12px"><h3>Бриф: 6 вопросов, одинаковых для сотрудника и менеджера</h3></div>
+  <div class="brief-q">
+    <div>Главные результаты за период<span>Что сделано и какой эффект для бизнеса</span></div>
+    <div>Сильные стороны<span>Что получается лучше всего, за чем к человеку приходят</span></div>
+    <div>Сложности<span>Что мешало, где не получилось</span></div>
+    <div>Что развивать в следующие 6 месяцев<span>Конкретные навыки, а не «расти»</span></div>
+    <div>Карьерная цель на год<span>Куда человек хочет двигаться</span></div>
+    <div>Оценка 4 компетенций от 1 до 5<span>Набор компетенций свой для каждой роли</span></div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="shead">
+    <div class="num">03 · Когда подключается команда обучения</div>
+    <h2>План приходит к нам в тот же день, что и созвон</h2>
+  </div>
+  <div class="flow">
+    <div class="fs e"><div class="dot">1</div><div class="when">за 7 дней до созвона</div><h3>Бриф</h3><p>Сотрудник и менеджер заполняют анкету в Sana</p></div>
+    <div class="fs e"><div class="dot">2</div><div class="when">30 минут</div><h3>Созвон ревью</h3><p>Обсуждают итоги и расхождения в ответах</p></div>
+    <div class="fs g"><div class="dot">3</div><div class="when">сразу после</div><h3>Генератор</h3><p>Собирает черновик плана за минуту</p></div>
+    <div class="fs ld"><div class="dot">4</div><span class="badge">Здесь подключаемся мы</span><h3>Проверка L&amp;D</h3><p>Правим черновик, проверяем курсы. 10 минут</p></div>
+    <div class="fs g"><div class="dot">5</div><div class="when">1–2 дня</div><h3>Подтверждение</h3><p>Менеджер и сотрудник соглашаются с планом</p></div>
+    <div class="fs g"><div class="dot">6</div><div class="when">сразу</div><h3>Sana назначает</h3><p>Курсы в личном кабинете, первый уже на этой неделе</p></div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="shead">
+    <div class="num">04 · Демо</div>
+    <h2>Так выглядит результат</h2>
+    <p class="lede">Выберите сотрудника. Слева ответы на бриф, справа то, что генератор отдаёт команде обучения.</p>
+  </div>
+  <div class="demo">
+    <div class="demo-top">
+      <div class="people" role="group" aria-label="Сотрудник" id="people"></div>
+      <span class="sample">вымышленные сотрудники и курсы</span>
+    </div>
+    <div class="demo-grid">
+      <div class="pane" id="input"></div>
+      <div class="pane" id="output"></div>
+    </div>
+  </div>
+</section>
+
+<section id="sana">
+  <div class="shead">
+    <div class="num">05 · Связка с Sana Learn</div>
+    <h2>Генератор выбирает только из того, что есть в Sana</h2>
+    <p class="lede">Каждый курс в Sana размечен по компетенциям. Генератор не придумывает обучение, он выбирает из нашего каталога. Если подходящего курса нет, это сигнал для нас его создать.</p>
+  </div>
+  <div class="loop">
+    <div class="lp"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/></svg></div><h3>Каталог по компетенциям</h3><p>У каждого курса теги: компетенция, роль, уровень. Это словарь, по которому работает генератор.</p></div>
+    <div class="lp"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></div><h3>Новые курсы за часы</h3><p>Нет курса под частую зону роста? Sana соберёт черновик из документов эксперта, эксперт его вычитает.</p></div>
+    <div class="lp"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg></div><h3>Назначение и напоминания</h3><p>План превращается в путь обучения в личном кабинете. Напоминания Sana отправляет сама.</p></div>
+    <div class="lp"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></div><h3>Прогресс и проверка знаний</h3><p>ИИ-квизы показывают, понял ли человек материал. ИИ-тьютор отвечает на вопросы внутри курса.</p></div>
+  </div>
+  <div class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Данные о прохождении попадают в бриф следующего ревью. Цикл замыкается: видно, какие курсы реально помогли.</div>
+</section>
+
+<section id="savings">
+  <div class="shead">
+    <div class="num">06 · Экономия</div>
+    <h2>Сколько времени это возвращает</h2>
+    <p class="lede">Подвигайте значения. Исходные цифры — мои оценки, реальные уточним на старте.</p>
+  </div>
+  <div class="calc">
+    <div class="pane">
+      <div class="field"><label for="n">Сотрудников в цикле ревью <output id="n-o"></output></label><input id="n" type="range" min="50" max="800" step="10" value="500"></div>
+      <div class="field"><label for="man">Минут на один план вручную <output id="man-o"></output></label><input id="man" type="range" min="20" max="120" step="5" value="60"></div>
+      <div class="field"><label for="ai">Минут на проверку черновика <output id="ai-o"></output></label><input id="ai" type="range" min="3" max="30" step="1" value="10"></div>
+      <div class="field"><label for="ppl">Специалистов L&amp;D на этой задаче <output id="ppl-o"></output></label><input id="ppl" type="range" min="1" max="3" step="1" value="1"></div>
+      <div>
+        <div class="tag" style="color:var(--muted);margin-bottom:6px">Откуда берётся 60 → 10 минут</div>
+        <div class="breakdown">
+          <div class="br"><span>Прочитать и сравнить ответы</span><span class="mono x">15</span><span class="mono y">3</span></div>
+          <div class="br"><span>Найти зоны роста</span><span class="mono x">10</span><span class="mono y">2</span></div>
+          <div class="br"><span>Подобрать курсы и практику</span><span class="mono x">15</span><span class="mono y">2</span></div>
+          <div class="br"><span>Написать план развития</span><span class="mono x">15</span><span class="mono y">3</span></div>
+          <div class="br"><span>Назначить обучение</span><span class="mono x">5</span><span class="mono y">0</span></div>
+          <div class="br"><span>Итого, минут</span><span class="mono x">60</span><span class="mono y">10</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="pane" style="background:var(--soft)">
+      <div class="res-big">
+        <div><b class="mono" id="r-hours">—</b><span>часов экономии за цикл</span></div>
+        <div><b class="mono" id="r-days">—</b><span>рабочих дней специалиста</span></div>
+      </div>
+      <div class="weeks">
+        <div class="tag" style="color:var(--muted)">Через сколько недель последний сотрудник получит план</div>
+        <div class="wk"><div class="wk-l"><span><b>Вручную</b></span><span class="mono emp" id="w-man"></span></div><div class="wk-bar"><div class="wk-fill" id="wf-man" style="background:var(--emp)"></div></div></div>
+        <div class="wk"><div class="wk-l"><span><b>С генератором</b></span><span class="mono aic" id="w-ai"></span></div><div class="wk-bar"><div class="wk-fill" id="wf-ai" style="background:var(--ai)"></div></div></div>
+        <div class="wk-scale" id="wk-scale"></div>
+      </div>
+      <p class="note">Считаю 6 часов в день на эту задачу, остальное время уходит на созвоны и текущую работу. Сами 30-минутные созвоны генератор не сокращает.</p>
+    </div>
+  </div>
+</section>
+
+<section id="quality">
+  <div class="shead">
+    <div class="num">07 · Качество</div>
+    <h2>Как поймём, что генератор работает хорошо</h2>
+    <p class="lede">Скорость без качества ничего не стоит. Четыре метрики, от первого дня до следующего ревью. Целевые значения предлагаю как стартовые.</p>
+  </div>
+  <div class="metrics" id="metrics"></div>
+  <div class="checks">
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg><span><b>Человек проверяет каждый план.</b> ИИ не ставит оценки и не решает про бонусы. Только черновики.</span></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg><span><b>Пилот на одной команде.</b> Сравниваем планы генератора и ручные, прежде чем запускать на всех.</span></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg><span><b>Данные в корпоративных инструментах.</b> Ответы брифа не уходят в личные аккаунты и открытые сервисы.</span></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Олеся</b> · кандидат на роль Learning &amp; Development Specialist</p>
+    <p>Страница подготовлена к собеседованию. Сотрудники, ответы и курсы вымышлены. Цифры экономии — оценка на моих допущениях.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const P = {
+    anna:{name:'Анна К.',role:'Middle QA Engineer',tenure:'1 год 4 мес в компании',
+      qa:[
+        ['Главные результаты','Покрыла автотестами платёжный модуль. Ручной регресс сократился с 2 дней до 4 часов.','Автотесты на платежи — главный результат квартала для всей команды.'],
+        ['Сложности','Сложно отказывать, беру слишком много задач.','Иногда не успевает к релизу и не поднимает риск заранее.'],
+        ['Что развивать','Хочу разобраться в нагрузочном тестировании.','Планирование и раннее предупреждение о рисках. Готова менторить джуна.'],
+        ['Карьерная цель','Senior QA через год.','Senior через 9–12 месяцев реально.']
+      ],
+      comps:[['Экспертиза',4,4],['Коммуникация',3,4],['Планирование',4,3],['Развитие других',2,3]],
+      summary:'Сильный специалист с высоким доверием команды. Главный барьер к Senior — планирование: Анна берёт много задач и поздно сообщает о рисках. Мотивирована расти и готова к первому опыту наставничества.',
+      flag:'Анна оценивает коммуникацию ниже, чем менеджер (3 против 4). На созвоне стоит назвать это сильной стороной.',
+      gaps:[
+        {t:'Планирование и риски',p:'h',why:'Самооценка 4, менеджер 3. Задачи не успевают к релизу.',c:'Приоритизация и оценка задач · 45 мин',pr:'2 спринта сама оценивает задачи и озвучивает риски на дейли',s:'Менеджер, 15 мин раз в неделю'},
+        {t:'Нагрузочное тестирование',p:'mid',why:'Запрос сотрудника, нужен для уровня Senior.',c:'Нагрузочное тестирование с нуля · 3 ч',pr:'Нагрузочный тест для платёжного API',s:'Ментор: Senior QA из соседней команды'},
+        {t:'Наставничество',p:'mid',why:'Менеджер видит готовность, самооценка 2.',c:'Как быть бадди и ментором · 30 мин',pr:'Стать бадди для следующего нового QA',s:'Команда обучения'}
+      ],
+      idp:[['Месяц 1–2','Курс по приоритизации, оценки в спринтах'],['Месяц 3–4','Нагрузочное тестирование, первый тест'],['Месяц 5–6','Бадди для новичка, чек-ин с менеджером']]},
+    dima:{name:'Дмитрий С.',role:'Affiliate Manager',tenure:'2 года в компании',
+      qa:[
+        ['Главные результаты','Подключил 14 новых партнёров, вырос трафик из LatAm.','Хорошо привлекает партнёров, но часть дала трафик низкого качества.'],
+        ['Сложности','Много ручной работы с отчётами.','Решения о партнёрах принимает на ощущениях, мало смотрит в данные.'],
+        ['Что развивать','Хочу вести крупных партнёров.','Аналитика качества трафика, работа с данными.'],
+        ['Карьерная цель','Senior Affiliate Manager.','Senior возможен после прокачки аналитики.']
+      ],
+      comps:[['Экспертиза',4,4],['Переговоры',5,5],['Работа с данными',4,2],['Самостоятельность',4,4]],
+      summary:'Сильный переговорщик, партнёры его ценят. Рост количества партнёров не подкреплён контролем качества трафика. Чтобы вести крупных партнёров, Дмитрию нужно принимать решения на основе данных.',
+      flag:'Самое большое расхождение — работа с данными (4 против 2). Обсудить на конкретных примерах партнёров, иначе план не будет принят.',
+      gaps:[
+        {t:'Аналитика качества трафика',p:'h',why:'Разрыв в 2 балла между самооценкой и оценкой менеджера.',c:'Метрики партнёрского трафика: FTD, retention, LTV · 2 ч',pr:'Еженедельный разбор 5 партнёров по метрикам',s:'Ментор: аналитик отдела'},
+        {t:'Отчёты без рутины',p:'mid',why:'Сотрудник называет ручные отчёты главной сложностью.',c:'Сводные таблицы и ИИ для отчётов · 1 ч',pr:'Собрать автоматический отчёт по своим партнёрам',s:'Команда обучения'},
+        {t:'Ключевые партнёры',p:'mid',why:'Карьерная цель. Начинать после аналитики.',c:'Управление ключевыми клиентами · 1,5 ч',pr:'Вести одного крупного партнёра вместе с тимлидом',s:'Тимлид отдела'}
+      ],
+      idp:[['Месяц 1–2','Метрики трафика, еженедельные разборы'],['Месяц 3–4','Автоматический отчёт, меньше ручной работы'],['Месяц 5–6','Крупный партнёр в паре с тимлидом']]},
+    marina:{name:'Марина Л.',role:'Team Lead, Antifraud',tenure:'4 мес в роли лида',
+      qa:[
+        ['Главные результаты','Собрала команду из 5 человек, закрыли 2 вакансии.','Команда собрана быстро, но процессы пока держатся на ней.'],
+        ['Сложности','Не хватает времени на всё.','Мало делегирует, разбирает кейсы сама. Обратная связь редкая.'],
+        ['Что развивать','Хочу научиться управлять временем.','Делегирование и регулярная обратная связь.'],
+        ['Карьерная цель','Укрепиться в роли лида.','Через полгода команда работает без её ручного участия.']
+      ],
+      comps:[['Экспертиза',5,5],['Делегирование',3,2],['Обратная связь',3,2],['Планирование',3,3]],
+      summary:'Лучший эксперт по фроду в отделе, первые месяцы в роли лида. Марина видит проблему в нехватке времени, менеджер — в делегировании. Это одна проблема с двух сторон: время освободится, когда кейсы уйдут команде.',
+      flag:'Сотрудник и менеджер описывают одну и ту же проблему разными словами. Сформулировать её на созвоне как общую цель.',
+      gaps:[
+        {t:'Делегирование',p:'h',why:'Самооценка 3, менеджер 2. Разбирает кейсы вместо команды.',c:'Делегирование для новых тимлидов · 1 ч',pr:'Передать кейсы уровня 1–2 команде, себе оставить эскалации',s:'Ментор: опытный тимлид из другого отдела'},
+        {t:'Обратная связь',p:'h',why:'Менеджер отмечает, что фидбэк редкий.',c:'1:1 и обратная связь по модели SBI · 45 мин + ИИ-тренажёр разговора',pr:'Еженедельные 1:1 с каждым в команде',s:'Команда обучения'},
+        {t:'Управление временем',p:'mid',why:'Запрос сотрудника. Закроется частично через делегирование.',c:'Неделя тимлида: планирование времени · 30 мин',pr:'Аудит своего календаря через месяц',s:'Самостоятельно'}
+      ],
+      idp:[['Месяц 1–2','Делегирование и первые еженедельные 1:1'],['Месяц 3–4','Команда разбирает кейсы, Марина только эскалации'],['Месяц 5–6','Аудит времени, чек-ин с менеджером']]}
+  };
+  const order=['anna','dima','marina'];
+  const peopleEl=document.getElementById('people'), inp=document.getElementById('input'), out=document.getElementById('output');
+  const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let cur='anna', timers=[];
+
+  order.forEach(k=>{
+    const b=document.createElement('button');b.dataset.k=k;b.setAttribute('aria-pressed',k===cur);
+    b.innerHTML='<b>'+P[k].name+'</b><span>'+P[k].role+'</span>';
+    b.onclick=()=>{cur=k;peopleEl.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.k===k));renderInput();generate(true)};
+    peopleEl.appendChild(b);
+  });
+
+  function renderInput(){
+    const p=P[cur];
+    let h='<div class="pane-h"><div><h3>'+p.name+'</h3><div class="note">'+p.role+' · '+p.tenure+'</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip e"><i></i>Сотрудник</span><span class="chip m"><i></i>Менеджер</span></div></div>';
+    p.qa.forEach(([q,e,m])=>{h+='<div class="qa"><div class="q">'+q+'</div><div class="ans e"><span class="who">С</span><span>'+esc(e)+'</span></div><div class="ans m"><span class="who">М</span><span>'+esc(m)+'</span></div></div>'});
+    h+='<div class="qa"><div class="q">Оценка компетенций</div><div class="comps">';
+    p.comps.forEach(([n,e,m])=>{
+      const pos=v=>((v-1)/4*100);
+      const lo=Math.min(e,m),hi=Math.max(e,m),g=Math.abs(e-m);
+      let ticks='';for(let i=0;i<5;i++)ticks+='<span class="tick" style="left:'+(i*25)+'%"></span>';
+      h+='<div class="comp"><div class="comp-l"><span>'+n+'</span>'+(g?'<span class="gap">расхождение '+g+'</span>':'<span class="note">совпадает · '+e+'</span>')+'</div><div class="track" aria-label="'+n+': сотрудник '+e+', менеджер '+m+'"><span class="rail"></span>'+ticks+(g?'<span class="span" style="left:'+pos(lo)+'%;width:'+(pos(hi)-pos(lo))+'%"></span>':'')+'<span class="pt m" style="left:'+pos(m)+'%"></span><span class="pt e" style="left:'+pos(e)+'%"></span></div></div>';
+    });
+    h+='<div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>';
+    inp.innerHTML=h;
+  }
+
+  const head=()=>'<div class="pane-h"><div><span class="chip a"><i></i>Результат генератора</span></div><button class="gen" id="regen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Сгенерировать</button></div>';
+
+  function resultHTML(){
+    const p=P[cur];
+    let h='<div class="out">';
+    h+='<div class="sum"><span class="tag">Резюме ревью</span>'+esc(p.summary)+'</div>';
+    h+='<div class="flag"><b>Обратить внимание: </b>'+esc(p.flag)+'</div>';
+    h+='<div class="gaps"><div class="tag" style="color:var(--muted)">Зоны роста и что делать</div>';
+    p.gaps.forEach(g=>{
+      h+='<div class="gapc"><div class="gapc-h"><h3>'+g.t+'</h3><span class="prio '+g.p+'">'+(g.p==='h'?'приоритет':'дальше')+'</span></div><div class="why">'+esc(g.why)+'</div><div class="acts"><div class="act sana"><span class="k">Курс в Sana</span>'+esc(g.c)+'</div><div class="act"><span class="k">Практика</span>'+esc(g.pr)+'</div><div class="act"><span class="k">Поддержка</span>'+esc(g.s)+'</div></div></div>';
+    });
+    h+='</div><div><div class="tag" style="color:var(--muted);margin-bottom:8px">План развития на 6 месяцев</div><div class="idp">';
+    p.idp.forEach(([a,b])=>{h+='<div><b>'+a+'</b>'+esc(b)+'</div>'});
+    h+='</div></div><div class="ready"><span class="chip a"><i></i>Черновик готов</span><span>Дальше: проверка L&amp;D <b>~10 мин</b> → подтверждение менеджера → назначение в Sana</span></div></div>';
+    return h;
+  }
+
+  function generate(animate){
+    timers.forEach(clearTimeout);timers=[];
+    const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!animate||reduce){out.innerHTML=head()+resultHTML();bind();return}
+    const steps=['Читаю ответы сотрудника','Сравниваю с оценкой менеджера','Ищу зоны роста','Подбираю курсы в каталоге Sana','Собираю план на 6 месяцев'];
+    out.innerHTML=head()+'<div class="loader">'+steps.map((s,i)=>'<div class="lstep" id="ls'+i+'"><span class="s"></span>'+s+'</div>').join('')+'</div>';
+    bind();
+    steps.forEach((_,i)=>{
+      timers.push(setTimeout(()=>{const el=document.getElementById('ls'+i);if(el)el.className='lstep run';const pr=document.getElementById('ls'+(i-1));if(pr)pr.className='lstep done'},i*380));
+    });
+    timers.push(setTimeout(()=>{out.innerHTML=head()+resultHTML();bind()},steps.length*380+250));
+  }
+  function bind(){const b=document.getElementById('regen');if(b)b.onclick=()=>generate(true)}
+  renderInput();generate(false);
+
+  // calculator
+  const ids=['n','man','ai','ppl'];
+  const nf=n=>Math.round(n).toLocaleString('ru-RU');
+  function calc(){
+    const v={};ids.forEach(i=>{v[i]=+document.getElementById(i).value;document.getElementById(i+'-o').textContent=v[i]});
+    const hMan=v.n*v.man/60,hAi=v.n*v.ai/60,saved=hMan-hAi;
+    const perWeek=6*5*v.ppl;
+    const wMan=hMan/perWeek,wAi=hAi/perWeek;
+    document.getElementById('r-hours').textContent=nf(saved);
+    document.getElementById('r-days').textContent=nf(saved/8);
+    const f=w=>w<1?Math.max(1,Math.round(w*5))+' дн.':(Math.round(w*10)/10).toString().replace('.',',')+' нед.';
+    document.getElementById('w-man').textContent=f(wMan);
+    document.getElementById('w-ai').textContent=f(wAi);
+    const max=Math.max(4,Math.ceil(wMan/2)*2);
+    document.getElementById('wf-man').style.width=Math.min(100,wMan/max*100)+'%';
+    document.getElementById('wf-ai').style.width=Math.max(3,wAi/max*100)+'%';
+    document.getElementById('wf-man').textContent=nf(hMan)+' ч';
+    document.getElementById('wf-ai').textContent=wAi/max>.18?nf(hAi)+' ч':'';
+    let sc='';const stp=max/4;for(let i=0;i<=4;i++)sc+='<span>'+Math.round(i*stp)+'</span>';
+    document.getElementById('wk-scale').innerHTML=sc;
+    document.getElementById('hs-man').textContent='~'+v.man+' мин';
+    document.getElementById('hs-ai').textContent='~'+v.ai+' мин';
+  }
+  ids.forEach(i=>document.getElementById(i).addEventListener('input',calc));calc();
+
+  // metrics
+  const M=[
+    ['День проверки','Принято без серьёзных правок','Доля черновиков, которые L&D и менеджер подтвердили с мелкими правками',80],
+    ['Первые 7 дней','Обучение началось','Сотрудник открыл первый курс в Sana в течение недели',70],
+    ['Через месяц','План полезен','Сотрудник оценивает свой план на 4 или 5 из 5',85],
+    ['Следующее ревью','Зона роста закрыта','Оценка компетенции выросла хотя бы на 1 балл',60]
+  ];
+  const mEl=document.getElementById('metrics');
+  M.forEach(([w,t,d,v])=>{
+    const r=26,c=2*Math.PI*r,off=c*(1-v/100);
+    mEl.insertAdjacentHTML('beforeend','<div class="mt"><div class="when">'+w+'</div><div class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="'+r+'" fill="none" stroke="var(--soft)" stroke-width="7"/><circle cx="32" cy="32" r="'+r+'" fill="none" stroke="var(--ai)" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 32 32)"/></svg><div class="t"><b class="mono">≥'+v+'%</b>цель</div></div><h3>'+t+'</h3><p>'+d+'</p></div>');
+  });
+
+  // nav highlight
+  const links=[...document.querySelectorAll('nav.steps a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+  function onScroll(){
+    let idx=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<140)idx=i});
+    links.forEach((a,i)=>a.classList.toggle('on',i===idx));
+    if(idx>=0){const a=links[idx],w=document.getElementById('navw');const l=a.offsetLeft-w.clientWidth/2+a.clientWidth/2;w.scrollTo({left:l,behavior:'smooth'})}
+  }
+  let tk=false;window.addEventListener('scroll',()=>{if(!tk){tk=true;requestAnimationFrame(()=>{onScroll();tk=false})}},{passive:true});onScroll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HiPo Scorecard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: three blocks only — problem, solution, example. Green = AI / good outcome, amber = attention, violet = expert track. */
+:root{
+  --bg:#F2F4F8; --surface:#FFFFFF; --ink:#101726; --muted:#5A6377; --line:#DCE1EA; --soft:#EAEEF4;
+  --ai:#14966A; --ai-soft:#DBF3E9; --ai-ink:#0B6B4B;
+  --warn:#D9822B; --warn-soft:#FCEEDD; --warn-ink:#9A5212;
+  --x:#8A3FD1; --x-soft:#F1E6FB; --x-ink:#6A28AA;
+  --bad:#D2453B; --bad-soft:#FBE4E2; --bad-ink:#A3271F;
+  --hero:#101726; --hero-fg:#F2F4F8; --hero-muted:#A4AEC2;
+  --display:"Unbounded","Golos Text",system-ui,sans-serif;
+  --body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D121C; --surface:#161D2B; --ink:#E9EDF5; --muted:#99A3B7; --line:#283247; --soft:#1C2537;
+  --ai:#3CCB94; --ai-soft:#11342A; --ai-ink:#7FE3BB;
+  --warn:#F0A04B; --warn-soft:#3A2814; --warn-ink:#F6C58A;
+  --x:#B784F0; --x-soft:#2A1C3D; --x-ink:#D4B3F7;
+  --bad:#F07067; --bad-soft:#3A1B19; --bad-ink:#F7A9A3;
+  --hero:#070A11; --hero-fg:#E9EDF5; --hero-muted:#8D97AB; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D121C; --surface:#161D2B; --ink:#E9EDF5; --muted:#99A3B7; --line:#283247; --soft:#1C2537;
+  --ai:#3CCB94; --ai-soft:#11342A; --ai-ink:#7FE3BB;
+  --warn:#F0A04B; --warn-soft:#3A2814; --warn-ink:#F6C58A;
+  --x:#B784F0; --x-soft:#2A1C3D; --x-ink:#D4B3F7;
+  --bad:#F07067; --bad-soft:#3A1B19; --bad-ink:#F7A9A3;
+  --hero:#070A11; --hero-fg:#E9EDF5; --hero-muted:#8D97AB; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h2{font-size:clamp(24px,3.6vw,34px);font-weight:600}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+
+.hero{background:var(--hero);color:var(--hero-fg);padding-block:52px 56px}
+.hero .wrap{display:grid;gap:18px}
+.hero .label{color:var(--hero-muted)}
+.hero h1{font-size:clamp(30px,5.4vw,54px);font-weight:800;letter-spacing:-.02em;max-width:18ch}
+.hero h1 em{font-style:normal;color:var(--ai)}
+.hero p{color:var(--hero-muted);font-size:18px;max-width:58ch}
+.hero p b{color:var(--hero-fg)}
+
+section{padding-block:60px;display:grid;gap:24px}
+section+section{border-top:1px solid var(--line)}
+.head{display:grid;gap:10px}
+.step{display:inline-flex;align-items:center;gap:10px}
+.step i{font-style:normal;font-family:var(--mono);font-weight:600;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-size:14px}
+
+/* problem */
+.prob{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.prob{grid-template-columns:1fr}}
+.prob div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:6px;align-content:start}
+.prob p{font-size:15px;color:var(--muted)}
+.fact{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--warn-soft);border-radius:14px;padding:16px 20px}
+.fact b{font-family:var(--display);font-size:34px;color:var(--warn-ink);line-height:1}
+.fact span{font-size:16px;max-width:62ch}
+
+/* solution */
+.flow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:stretch}
+@media (max-width:820px){.flow{grid-template-columns:1fr}.flow .arr{transform:rotate(90deg);justify-self:center}}
+.fb{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:8px;align-content:start}
+.fb.ai{background:var(--ai-soft);border-color:transparent}
+.fb p{font-size:15px;color:var(--muted)}
+.fb.ai p{color:var(--ink)}
+.arr{align-self:center;font-family:var(--display);font-size:22px;color:var(--muted)}
+.crits{display:flex;flex-wrap:wrap;gap:6px}
+.crits span{font-size:13px;font-weight:600;background:var(--soft);padding:4px 10px;border-radius:999px}
+
+.scale{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:14px}
+.scale-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.lv{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:760px){.lv{grid-template-columns:1fr}}
+.lv div{border-radius:12px;padding:12px;display:grid;gap:6px;align-content:start;font-size:14px;line-height:1.45;background:var(--soft)}
+.lv b{font-family:var(--display);font-size:22px}
+.lv div:nth-child(4){background:var(--ai-soft)}
+.lv div:nth-child(5){background:var(--ai);color:#fff}
+@media (max-width:760px){.lv div{grid-template-columns:34px minmax(0,1fr);align-items:baseline}}
+
+/* example */
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:4px;background:var(--surface);gap:2px;justify-self:start}
+.toggle button{all:unset;cursor:pointer;padding:9px 18px;border-radius:999px;font-size:15px;font-weight:600;color:var(--muted)}
+.toggle button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.toggle button:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
+.how{font-size:16px;color:var(--muted);min-height:1.6em}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;gap:14px;align-content:start}
+.card-h{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.card-h .r{font-size:13px;color:var(--muted)}
+.perf{font-family:var(--mono);font-size:12px;background:var(--soft);padding:4px 8px;border-radius:6px;white-space:nowrap}
+.quote{font-size:15px;line-height:1.5;border-left:3px solid var(--line);padding-left:12px;color:var(--muted)}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:150px minmax(0,1fr) 18px;gap:10px;align-items:center;font-size:13px}
+.bar .t{height:10px;background:var(--soft);border-radius:5px;overflow:hidden}
+.bar .f{height:100%;border-radius:5px;background:var(--ai)}
+.bar .f.lo{background:var(--warn)}
+.bar b{font-family:var(--mono);font-size:13px;text-align:right}
+.pot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:12px}
+.pot b{font-family:var(--display);font-size:26px}
+.ainote{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;font-size:14px;line-height:1.45;background:var(--ai-soft);border-radius:10px;padding:10px 12px}
+.ainote.w{background:var(--warn-soft)}
+.ainote svg{width:20px;height:20px;color:var(--ai-ink)}
+.ainote.w svg{color:var(--warn-ink)}
+.dec{font-weight:700;font-size:15px;padding:10px 14px;border-radius:10px;display:flex;gap:8px;align-items:center}
+.dec.in{background:var(--ai);color:#fff}
+.dec.hold{background:var(--warn-soft);color:var(--warn-ink)}
+.dec.exp{background:var(--x-soft);color:var(--x-ink)}
+.dec.no{background:var(--soft);color:var(--muted)}
+.risk{font-size:14px;color:var(--bad-ink);background:var(--bad-soft);border-radius:10px;padding:10px 12px;line-height:1.45}
+.sample{font-family:var(--mono);font-size:11px;padding:3px 8px;border:1px dashed var(--muted);border-radius:4px;color:var(--muted)}
+.result{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.result{grid-template-columns:1fr}}
+.result div{display:grid;gap:4px;padding-top:12px;border-top:3px solid var(--ai);font-size:15px}
+.result b{font-size:16px}
+
+/* how to score */
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.steps3{grid-template-columns:1fr}}
+.steps3 div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:6px;align-content:start}
+.steps3 b{font-family:var(--mono);font-size:12px;color:var(--ai-ink)}
+.steps3 p{font-size:15px;color:var(--muted)}
+.qs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.qs{grid-template-columns:1fr}}
+.qc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:12px;align-content:start}
+.qc .ask{font-size:16px;font-weight:600;line-height:1.45}
+.qc .ask::before{content:"Спросить: ";color:var(--muted);font-weight:500}
+.sig{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+@media (max-width:480px){.sig{grid-template-columns:1fr}}
+.sig div{border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.45;display:grid;gap:4px;align-content:start}
+.sig .hi{background:var(--ai-soft)} .sig .lo{background:var(--warn-soft)}
+.sig .k{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+.sig .hi .k{color:var(--ai-ink)} .sig .lo .k{color:var(--warn-ink)}
+.fi{display:grid;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+.fi-row{display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);gap:10px;align-items:center;font-size:15px}
+@media (max-width:600px){.fi-row{grid-template-columns:1fr}.fi-row .to{display:none}}
+.fi-row .no{background:var(--bad-soft);color:var(--bad-ink);border-radius:10px;padding:8px 12px;text-decoration:line-through;text-decoration-thickness:1px}
+.fi-row .yes{background:var(--ai-soft);border-radius:10px;padding:8px 12px}
+.fi-row .to{color:var(--muted);text-align:center}
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.rules{grid-template-columns:1fr}}
+.rules div{padding-top:12px;border-top:3px solid var(--ink);display:grid;gap:4px;font-size:15px}
+.rules span{color:var(--muted)}
+
+footer{padding-block:36px 56px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+footer .wrap{display:grid;gap:6px}
+footer b{color:var(--ink)}
+footer a{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="label">HiPo · оценка потенциала · предложение кандидата</div>
+    <h1>Выбирать HiPo <em>по одной шкале</em>, а не по ощущениям</h1>
+    <p>Простая шкала оценки потенциала и ИИ-помощник, который готовит оценку для комиссии. <b>Решение всегда принимают люди.</b></p>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section>
+  <div class="head">
+    <span class="step"><i>1</i><span class="label">Проблема</span></span>
+    <h2>Сейчас в HiPo попадает тот, кто больше всех делает</h2>
+  </div>
+  <div class="prob">
+    <div><h3>Нет общей шкалы</h3><p>Каждый менеджер понимает «потенциал» по-своему.</p></div>
+    <div><h3>Продуктивность ≠ потенциал</h3><p>Лучший исполнитель не обязательно станет лидером.</p></div>
+    <div><h3>Решение сложно объяснить</h3><p>Ни комиссии, ни тем, кто не прошёл.</p></div>
+  </div>
+  <div class="fact"><b class="mono">15%</b><span>Только у 15% сотрудников с высокими результатами есть высокий потенциал. Исследование CEB.</span></div>
+</section>
+
+<section>
+  <div class="head">
+    <span class="step"><i>2</i><span class="label">Решение</span></span>
+    <h2>Шкала + ИИ-помощник + решение комиссии</h2>
+  </div>
+  <div class="flow">
+    <div class="fb">
+      <h3>Шкала</h3>
+      <p>4 критерия, каждый оценивается от 1 до 5. Для каждого балла записано, как он выглядит в поведении.</p>
+      <div class="crits"><span>Хочет расти</span><span>Справится с ролью выше</span><span>Быстро учится</span><span>Связывает будущее с компанией</span></div>
+    </div>
+    <div class="arr" aria-hidden="true">→</div>
+    <div class="fb ai">
+      <h3>ИИ-помощник</h3>
+      <p>Читает заметки с интервью и разборов, предлагает балл по шкале со ссылкой на факт и отмечает спорные места.</p>
+    </div>
+    <div class="arr" aria-hidden="true">→</div>
+    <div class="fb">
+      <h3>Комиссия</h3>
+      <p>Проверяет черновик, обсуждает только спорные случаи и принимает решение.</p>
+    </div>
+  </div>
+
+  <div class="scale">
+    <div class="scale-h"><h3>Так выглядит шкала. Пример: «Хочет расти»</h3><span class="muted" style="font-size:14px">Остальные 3 критерия описаны так же</span></div>
+    <div class="lv">
+      <div><b>1</b><span>Не хочет менять роль и брать больше ответственности</span></div>
+      <div><b>2</b><span>Готов расти, если предложат, но сам инициативы не проявляет</span></div>
+      <div><b>3</b><span>Хочет расти, но нет конкретной цели и шагов</span></div>
+      <div><b>4</b><span>Есть цель, иногда сам берёт задачи уровня выше</span></div>
+      <div><b>5</b><span>Ясная цель, регулярно берёт задачи уровня выше и просит обратную связь</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <span class="step"><i>3</i><span class="label">Как ставить оценку</span></span>
+    <h2>Оцениваем по фактам из разговора, а не по впечатлению</h2>
+    <p class="muted" style="max-width:62ch">Метод называется поведенческое интервью: спрашиваем о реальных случаях из прошлого, слушаем, что человек сделал, и сравниваем с описанием баллов.</p>
+  </div>
+  <div class="steps3">
+    <div><b>Шаг 1</b><h3>Спросить о случае</h3><p>«Расскажите о случае, когда…». Не «как бы вы поступили», а что уже было.</p></div>
+    <div><b>Шаг 2</b><h3>Записать факты</h3><p>Что сделал сам, когда, какой результат. Цитаты, а не выводы.</p></div>
+    <div><b>Шаг 3</b><h3>Найти балл на шкале</h3><p>Какое описание балла совпадает с фактами. Это и есть оценка.</p></div>
+  </div>
+
+  <div class="qs">
+    <div class="qc"><h3>Хочет расти</h3><p class="ask">«Кем видите себя через год? Что уже делаете для этого?»</p>
+      <div class="sig"><div class="hi"><span class="k">Звучит на 4–5</span>Называет конкретную роль и срок. «Уже попросил», «уже веду», «договорился с тимлидом».</div><div class="lo"><span class="k">Звучит на 1–2</span>«Как получится», «мне и так нормально», «если предложат — подумаю».</div></div></div>
+    <div class="qc"><h3>Справится с ролью выше</h3><p class="ask">«Расскажите о самом сложном решении за полгода. Почему выбрали именно его?»</p>
+      <div class="sig"><div class="hi"><span class="k">Звучит на 4–5</span>Сравнивает варианты, объясняет, как решение повлияет на другие команды и бизнес.</div><div class="lo"><span class="k">Звучит на 1–2</span>«Так сказали», «так всегда делаем», не может объяснить выбор.</div></div></div>
+    <div class="qc"><h3>Быстро учится</h3><p class="ask">«Чему новому научились за последние полгода? Где уже применили?»</p>
+      <div class="sig"><div class="hi"><span class="k">Звучит на 4–5</span>Конкретный навык, где применил и какой результат. Сам просил обратную связь.</div><div class="lo"><span class="k">Звучит на 1–2</span>Общие слова: «читаю статьи», «слежу за трендами». Без примера применения.</div></div></div>
+    <div class="qc"><h3>Связывает будущее с компанией</h3><p class="ask">«Что бы вы изменили в компании? Где видите себя через 2–3 года?»</p>
+      <div class="sig"><div class="hi"><span class="k">Звучит на 4–5</span>Говорит «мы», предлагает улучшения, помогает коллегам за пределами своих задач.</div><div class="lo"><span class="k">Звучит на 1–2</span>«Это не моя зона», говорит только о своих задачах, не видит себя здесь дальше года.</div></div></div>
+  </div>
+
+  <div class="fi">
+    <h3>Как записывать: факт вместо впечатления</h3>
+    <div class="fi-row"><span class="no">«Он харизматичный лидер»</span><span class="to">→</span><span class="yes">«3 раза провёл планёрку команды, пока тимлид был в отпуске»</span></div>
+    <div class="fi-row"><span class="no">«Она очень умная»</span><span class="to">→</span><span class="yes">«Сама разобралась в новом инструменте за 2 недели и обучила двух коллег»</span></div>
+    <div class="fi-row"><span class="no">«Кажется, не очень мотивирован»</span><span class="to">→</span><span class="yes">«На вопрос о целях ответил: если предложат, подумаю»</span></div>
+  </div>
+
+  <div class="rules">
+    <div><b>Нет факта — нет оценки</b><span>Ставим «нет данных» и уточняем на следующем этапе.</span></div>
+    <div><b>Каждый оценивает сам</b><span>Оценщики ставят баллы независимо и только потом сверяются.</span></div>
+    <div><b>ИИ проверяет записи</b><span>Отмечает выводы без фактов и баллы, которые не совпадают с описанием шкалы.</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <span class="step"><i>4</i><span class="label">Пример</span></span>
+    <h2>Три сильных сотрудника. Кого брать в программу?</h2>
+  </div>
+  <div class="toggle" role="group" aria-label="Режим">
+    <button id="m-old" aria-pressed="false">Без системы</button>
+    <button id="m-new" aria-pressed="true">Со шкалой и ИИ</button>
+  </div>
+  <p class="how" id="how"></p>
+  <div class="cards" id="cards"></div>
+  <div class="result" id="res"></div>
+  <span class="sample" style="justify-self:start">вымышленные сотрудники</span>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Олеся</b> · кандидат на роль Learning &amp; Development Specialist</p>
+    <p>Данные о 15% — исследование CEB (<a href="https://www.hrmagazine.co.uk/content/news/many-high-potential-programmes-not-fit-for-purpose-ceb-says">HR Magazine</a>). Сотрудники и оценки вымышлены.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const CR=[['Хочет расти',25],['Справится с ролью выше',30],['Быстро учится',25],['Связывает будущее',20]];
+  const P=[
+    {n:'Тимур С.',r:'Backend Developer',perf:4.8,rank:1,
+     q:'«Закрыл больше всех задач в отделе, в 2 раза выше среднего»',
+     s:[4,2,3,3],
+     ai:['w','На разборе своей работы не смог объяснить решения в 2 задачах из 3. Высокие результаты и слабый разбор расходятся.'],
+     dec:['hold','Повторная проверка'],
+     old:['in','Берём в программу'],risk:'Риск: повысим человека, который пока не готов к роли выше.'},
+    {n:'Карина Л.',r:'Affiliate Manager',perf:4.6,rank:2,
+     q:'«Сама онбордит новичков и ведёт разборы партнёров для отдела»',
+     s:[5,4,4,5],
+     ai:['ok','Хочет вести команду и уже берёт задачи тимлида. Подтверждено на 3 этапах.'],
+     dec:['in','В HiPo-программу'],
+     old:['in','Берём в программу'],risk:''},
+    {n:'Дарья К.',r:'Antifraud Analyst',perf:4.4,rank:3,
+     q:'«Главный эксперт по схемам фрода, автор половины правил»',
+     s:[2,4,5,4],
+     ai:['ok','Сильный эксперт, но руководить не хочет. Ей подходит экспертный трек, а не HiPo.'],
+     dec:['exp','Экспертный трек'],
+     old:['no','Не берём: третья по результатам'],risk:'Риск: потеряем эксперта, который не получил своего пути развития.'}
+  ];
+  const ic={ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg>',w:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.5"/></svg>'};
+  const cards=document.getElementById('cards'),how=document.getElementById('how'),res=document.getElementById('res');
+  const bO=document.getElementById('m-old'),bN=document.getElementById('m-new');
+  function pot(s){return s.reduce((a,v,i)=>a+v*CR[i][1],0)/100}
+  function draw(mode){
+    bO.setAttribute('aria-pressed',mode==='old');bN.setAttribute('aria-pressed',mode==='new');
+    how.textContent=mode==='old'?'Менеджеры номинируют лучших по результатам. Берём двух первых.':'Оцениваем по 4 критериям. ИИ готовит черновик с фактами, комиссия решает.';
+    cards.innerHTML=P.map(p=>{
+      let h='<div class="card"><div class="card-h"><div><h3>'+p.n+'</h3><div class="r">'+p.r+'</div></div><span class="perf">ревью '+p.perf.toString().replace('.',',')+'</span></div>';
+      if(mode==='old'){
+        h+='<p class="quote">'+p.q+'</p><p class="muted" style="font-size:14px">Место по результатам: <b style="color:var(--ink)">'+p.rank+'</b></p><div class="dec '+p.old[0]+'">'+p.old[1]+'</div>'+(p.risk?'<div class="risk">'+p.risk+'</div>':'');
+      } else {
+        h+='<div class="bars">'+p.s.map((v,i)=>'<div class="bar"><span>'+CR[i][0]+'</span><div class="t"><div class="f'+(v<=2?' lo':'')+'" style="width:'+(v*20)+'%"></div></div><b>'+v+'</b></div>').join('')+'</div>';
+        h+='<div class="pot"><span class="muted" style="font-size:14px">Потенциал</span><b class="mono">'+pot(p.s).toFixed(2).replace('.',',')+'</b></div>';
+        h+='<div class="ainote'+(p.ai[0]==='w'?' w':'')+'">'+ic[p.ai[0]]+'<span><b>ИИ: </b>'+p.ai[1]+'</span></div>';
+        h+='<div class="dec '+p.dec[0]+'">'+p.dec[1]+'</div>';
+      }
+      return h+'</div>';
+    }).join('');
+    res.innerHTML=mode==='old'
+      ?'<div style="border-color:var(--bad)"><b>2 из 3 решений спорные</b><span class="muted">Взяли не готового к роли и не увидели эксперта.</span></div><div style="border-color:var(--bad)"><b>Решение не объяснить</b><span class="muted">«Он больше всех сделал» — не критерий потенциала.</span></div><div style="border-color:var(--bad)"><b>Время уходит впустую</b><span class="muted">Комиссия спорит о впечатлениях.</span></div>'
+      :'<div><b>Каждый получил свой путь</b><span class="muted">Программа, повторная проверка или экспертный трек.</span></div><div><b>Решение можно объяснить</b><span class="muted">У каждого балла есть факт с этапа отбора.</span></div><div><b>Комиссия экономит время</b><span class="muted">ИИ готовит черновик, обсуждаем только спорные случаи.</span></div>';
+  }
+  bO.onclick=()=>draw('old');bN.onclick=()=>draw('new');
+  draw('new');
+})();
+</script>
+</body>
+</html>
