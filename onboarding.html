@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Онбординг в Sana Learn</title>
+<style>
+/* Same visual family as the leaders course page: warm paper, deep green ink, coral accent, serif headings.
+   Layout: one reading column; a role switcher drives the onboarding timeline. */
+:root{
+  --bg:#f5efe4; --paper:#fbf8f2; --ink:#153f36; --text:#263c37; --muted:#6f7772;
+  --coral:#d96d55; --mint:#e5f0e8; --line:#dacfc0;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121a17; --paper:#1a2420; --ink:#cfe6dc; --text:#dfe7e3; --muted:#9aa7a1;
+  --coral:#ec8c76; --mint:#1f3229; --line:#2e3d36; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121a17; --paper:#1a2420; --ink:#cfe6dc; --text:#dfe7e3; --muted:#9aa7a1;
+  --coral:#ec8c76; --mint:#1f3229; --line:#2e3d36; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.65}
+.page{max-width:760px;margin:0 auto;padding-inline:22px;padding-block:56px 72px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--coral)}
+h1{font-family:var(--serif);font-weight:400;color:var(--ink);font-size:clamp(34px,6vw,52px);line-height:1.08;margin:12px 0 16px;text-wrap:balance}
+h2{font-family:var(--serif);font-weight:400;color:var(--ink);font-size:28px;line-height:1.2;margin:0 0 14px}
+h3{margin:0;font-size:18px;color:var(--ink)}
+p{margin:0}
+.lead{font-size:19px;color:var(--muted);max-width:54ch}
+.by{margin-top:22px;font-size:14px;color:var(--muted)}
+.by b{color:var(--ink)}
+hr{border:0;border-top:1px solid var(--line);margin:44px 0}
+.intro{color:var(--text);margin-bottom:20px;max-width:62ch}
+
+.roles{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.roles button{all:unset;cursor:pointer;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:15px;color:var(--ink)}
+.roles button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.roles button:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+
+.tl{list-style:none;margin:0;padding:0;border-left:2px solid var(--line);margin-left:8px}
+.tl li{position:relative;padding:0 0 26px 26px;display:grid;gap:4px}
+.tl li:last-child{padding-bottom:0}
+.tl li::before{content:"";position:absolute;left:-9px;top:5px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:3px solid var(--coral)}
+.tl .when{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--coral)}
+.tl .role{background:var(--mint);border-radius:12px;padding:12px 14px;margin-top:4px}
+.tl .role b{color:var(--ink)}
+
+.sana{display:grid;gap:12px}
+.sana div{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:start}
+.sana i{font-style:normal;font-family:var(--serif);font-size:22px;line-height:1.2;color:var(--coral)}
+
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.cards{grid-template-columns:1fr}}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:8px;align-content:start}
+.card ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:15px}
+.card.warn{background:var(--mint);border-color:transparent}
+footer{margin-top:48px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="eyebrow">Learning &amp; Development · заметки</div>
+  <h1>Как я бы выстроила онбординг</h1>
+  <p class="lead">Одна общая часть для всех и отдельный трек под каждую роль. Всё собрано в Sana Learn, новичок попадает в нужный трек сам.</p>
+  <p class="by"><b>Olesia Botsieva</b> · Learning &amp; Development</p>
+
+  <hr>
+
+  <h2>Путь новичка</h2>
+  <p class="intro">Первые 90 дней одинаковы по структуре. Меняется только ролевой трек на первой неделе. Выберите роль:</p>
+  <div class="roles" role="group" aria-label="Роль новичка">
+    <button data-r="dev" aria-pressed="true">Разработчик</button>
+    <button data-r="aff" aria-pressed="false">Affiliate Manager</button>
+    <button data-r="af" aria-pressed="false">Антифрод</button>
+    <button data-r="lead" aria-pressed="false">Тимлид</button>
+  </div>
+  <ol class="tl" id="tl"></ol>
+
+  <hr>
+
+  <h2>Что настраиваю в Sana</h2>
+  <div class="sana">
+    <div><i>1</i><p><b>Программа «Онбординг»</b> с порядком модулей, сроками и напоминаниями. Новичок видит, что ему пройти на этой неделе.</p></div>
+    <div><i>2</i><p><b>Автоматическая запись по роли.</b> Когда в HR-системе появляется новый сотрудник, он сразу попадает в общую часть и в свой ролевой трек.</p></div>
+    <div><i>3</i><p><b>Курсы из готовых документов.</b> Регламенты и вики команд Sana превращает в черновик курса, дальше я дорабатываю его с экспертом.</p></div>
+    <div><i>4</i><p><b>У каждого модуля есть владелец и дата пересмотра,</b> чтобы онбординг не устаревал.</p></div>
+  </div>
+
+  <hr>
+
+  <h2>Как понять, что онбординг работает</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>Что смотрю</h3>
+      <ul>
+        <li>Сколько людей уходит в первые 90 дней</li>
+        <li>Через сколько недель новичок работает сам, со слов тимлида</li>
+        <li>Опрос новичка на 30-й и 90-й день</li>
+        <li>Где в курсах люди бросают или долго застревают</li>
+      </ul>
+    </div>
+    <div class="card warn">
+      <h3>Когда пора обновлять</h3>
+      <ul>
+        <li>Новички задают одни и те же вопросы, ответов на которые нет в курсе</li>
+        <li>Тимлиды объясняют всё заново</li>
+        <li>В курсе старые инструменты, люди или регламенты</li>
+        <li>Появились новые роли или поменялись правила</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>Olesia Botsieva · Learning &amp; Development</footer>
+</main>
+
+<script>
+(function(){
+  const steps=[
+    ['За 5 дней до выхода','Преонбординг','Приветственное письмо, доступы, знакомство с бадди в чате. В Sana открыт вводный модуль.'],
+    ['День 1','Холдинг и культура','Структура, продукты, ценности. Обязательные правила отрасли: ответственная игра, AML, работа с данными.'],
+    ['Первая неделя','Трек по роли',null],
+    ['День 30','Встреча с HR и бадди','Короткий опрос в Sana: что понятно, чего не хватает, где нужна помощь.'],
+    ['День 90','Итог испытательного','Цели на полгода, первый план развития и отзыв о самом онбординге.']
+  ];
+  const roles={
+    dev:'<b>Разработчик:</b> архитектура продуктов, как устроены релизы и код-ревью, стандарты безопасности. Курс собран из документации команды.',
+    aff:'<b>Affiliate Manager:</b> как работают партнёрские программы, качество трафика, CRM и KPI отдела. Разбор реальных кейсов с партнёрами.',
+    af:'<b>Антифрод:</b> типовые схемы фрода, инструменты мониторинга, когда и кому эскалировать. Задания на обезличенных кейсах.',
+    lead:'<b>Тимлид:</b> как у нас проходят 1:1 и ревью, найм в команду, бюджет. Плюс курс для руководителей после испытательного.'
+  };
+  const tl=document.getElementById('tl');
+  function draw(r){
+    tl.innerHTML=steps.map(([w,t,d])=>'<li><span class="when">'+w+'</span><h3>'+t+'</h3>'+(d?'<p>'+d+'</p>':'<p class="role">'+roles[r]+'</p>')+'</li>').join('');
+  }
+  document.querySelectorAll('.roles button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('.roles button').forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');draw(b.dataset.r);
+  });
+  draw('dev');
+})();
+</script>
+</body>
+</html>
